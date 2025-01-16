@@ -5,5 +5,4 @@
 pandas
 fitz
 azure-functions
-easyocr
 pyMuPDF

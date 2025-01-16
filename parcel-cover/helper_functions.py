@@ -1,62 +1,61 @@
 import re
-import easyocr
 import pandas as pd
 
 used_cols = ['name', 'address', 'product', 'quantity', 'order_no']
 df = pd.DataFrame(columns=used_cols)
 
-def extract_shopee_with_image(doc, page_num):
-    name_address = []
-    page = doc[page_num]
-    image_list = page.get_images()
-    for idx, img in enumerate(image_list, start=1):
-        if idx in [3,5]:
-            data = doc.extract_image(img[0])
-            image_stream = data.get('image')
-            reader = easyocr.Reader(['th','en'], gpu=True)
-            result = reader.readtext(image_stream)
-            text = [item[1] for item in result]
-            name_address.append("".join(text))
-    prd_chk, ord_chk = 0,0
-    prd, prd_tmp , qty, ord_no = [],'',[],''
-    words = page.get_text('dict')
-    for b in words["blocks"]:
-        if b['type'] == 1:
-            continue
-        else:
-            for l in b['lines']:
-                for s in l['spans']:
-                    if s['text'].startswith('Shopee Order No'):
-                        ord_chk = 1
-                    elif ord_chk == 1:
-                        ord_no = s['text']
-                        ord_chk = 0
-                    elif s['text'] == 'Qty':
-                        prd_chk = 1
-                    elif prd_chk == 1 and not s['text'].isdigit():
-                        prd_chk = 0
-                    elif prd_chk == 1 and s['text'].isdigit():
-                        prd_chk = 2
-                    elif prd_chk == 2:
-                        if prd_tmp == 'Total:':
-                            prd_tmp = ''
-                            prd_chk = 0 
-                        elif s['text'].isdigit():
-                            prd.append(prd_tmp)
-                            qty.append(int(s['text']))
-                            prd_tmp = ''
-                            prd_chk = 1
-                        else:
-                            prd_tmp += s['text'].strip()
+# def extract_shopee_with_image(doc, page_num):
+#     name_address = []
+#     page = doc[page_num]
+#     image_list = page.get_images()
+#     for idx, img in enumerate(image_list, start=1):
+#         if idx in [3,5]:
+#             data = doc.extract_image(img[0])
+#             image_stream = data.get('image')
+#             reader = easyocr.Reader(['th','en'], gpu=True)
+#             result = reader.readtext(image_stream)
+#             text = [item[1] for item in result]
+#             name_address.append("".join(text))
+#     prd_chk, ord_chk = 0,0
+#     prd, prd_tmp , qty, ord_no = [],'',[],''
+#     words = page.get_text('dict')
+#     for b in words["blocks"]:
+#         if b['type'] == 1:
+#             continue
+#         else:
+#             for l in b['lines']:
+#                 for s in l['spans']:
+#                     if s['text'].startswith('Shopee Order No'):
+#                         ord_chk = 1
+#                     elif ord_chk == 1:
+#                         ord_no = s['text']
+#                         ord_chk = 0
+#                     elif s['text'] == 'Qty':
+#                         prd_chk = 1
+#                     elif prd_chk == 1 and not s['text'].isdigit():
+#                         prd_chk = 0
+#                     elif prd_chk == 1 and s['text'].isdigit():
+#                         prd_chk = 2
+#                     elif prd_chk == 2:
+#                         if prd_tmp == 'Total:':
+#                             prd_tmp = ''
+#                             prd_chk = 0 
+#                         elif s['text'].isdigit():
+#                             prd.append(prd_tmp)
+#                             qty.append(int(s['text']))
+#                             prd_tmp = ''
+#                             prd_chk = 1
+#                         else:
+#                             prd_tmp += s['text'].strip()
 
-    new_rows = [['','',prd[i],qty[i],''] for i in range(len(prd))]
-    temp = pd.DataFrame(new_rows, columns=used_cols)
-    temp['name'] = name_address[0]
-    temp['address'] = name_address[1]
-    temp['order_no'] = ord_no
-    temp['post_code'] = temp['address'].apply(lambda x: re.findall(r"\d{5}", x)[0] if len(re.findall(r"\d{5}", x)) > 0 else '')
+#     new_rows = [['','',prd[i],qty[i],''] for i in range(len(prd))]
+#     temp = pd.DataFrame(new_rows, columns=used_cols)
+#     temp['name'] = name_address[0]
+#     temp['address'] = name_address[1]
+#     temp['order_no'] = ord_no
+#     temp['post_code'] = temp['address'].apply(lambda x: re.findall(r"\d{5}", x)[0] if len(re.findall(r"\d{5}", x)) > 0 else '')
     
-    return temp
+#     return temp
 
 def extract_shopee(doc, page_num):
     words = doc[page_num].get_text('dict')

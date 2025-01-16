@@ -29,9 +29,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         pdf_file = io.BytesIO(response.content)
         doc = fitz.open(stream=pdf_file, filetype="pdf")
         for i in range(len(doc)):
-            if doc[i].get_text()[:4] == 'PICK':
-                temp = hf.extract_shopee_with_image(doc, i)
-            elif re.search("Shopee Order", doc[i].get_text()):
+            # if doc[i].get_text()[:4] == 'PICK':
+            #     temp = hf.extract_shopee_with_image(doc, i)
+            # el
+            if re.search("Shopee Order", doc[i].get_text()):
                 temp = hf.extract_shopee(doc, i)
             elif re.search("LAZADA Order", doc[i].get_text()):
                 temp = hf.extract_lazada(doc, i)
