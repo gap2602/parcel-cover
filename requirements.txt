@@ -5,3 +5,4 @@
 pandas
 PyMuPDF
 azure-functions
+requests
