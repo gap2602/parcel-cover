@@ -2,7 +2,6 @@ import azure.functions as func
 import pandas as pd
 import requests
 import logging
-import json
 import pymupdf
 import re
 import io
@@ -40,7 +39,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 temp = hf.extract_tiktok(doc, i)
         
             df = pd.concat([df, temp], axis=0).reset_index(drop=True)
-            json_df = json.dumps(df.to_dict('records'))
+            json_df = df.to_json(orient='records')
 
         return func.HttpResponse(json_df)
     else:
