@@ -32,7 +32,6 @@ jobs:
         pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         python -m pip install --upgrade pip
         pip install -r requirements.txt 
-        pip install pyMuPDF
         popd
     
     - name: 'Run Azure Functions Action'

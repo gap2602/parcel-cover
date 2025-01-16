@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 import logging
 import json
-import fitz
+import pymupdf
 import re
 import io
 from . import helper_functions as hf
@@ -27,7 +27,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         url = "https://drive.google.com/uc?id=" + file_id
         response = requests.get(url)
         pdf_file = io.BytesIO(response.content)
-        doc = fitz.open(stream=pdf_file, filetype="pdf")
+        doc = pymupdf.open(stream=pdf_file, filetype="pdf")
         for i in range(len(doc)):
             # if doc[i].get_text()[:4] == 'PICK':
             #     temp = hf.extract_shopee_with_image(doc, i)

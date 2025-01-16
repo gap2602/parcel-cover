@@ -3,5 +3,5 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 pandas
-fitz
+PyMuPDF
 azure-functions
