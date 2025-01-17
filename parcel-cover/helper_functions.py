@@ -4,6 +4,12 @@ import pandas as pd
 used_cols = ['name', 'address', 'product', 'quantity', 'order_no']
 df = pd.DataFrame(columns=used_cols)
 
+def correct_th_text(text):
+    cr_text = text.replace("","์") #การันต์
+    cr_text = cr_text.replace("","่") #ไม้เอก
+    cr_text = cr_text.replace("","้") #ไม้โท
+    return cr_text
+
 # def extract_shopee_with_image(doc, page_num):
 #     name_address = []
 #     page = doc[page_num]
@@ -104,6 +110,8 @@ def extract_shopee(doc, page_num):
     temp['address'] = adr
     temp['order_no'] = ord_no
     temp['post_code'] = post_code
+    temp['name'] = temp['name'].apply(correct_th_text)
+    temp['address'] = temp['address'].apply(correct_th_text)
     
     return temp
 
@@ -154,6 +162,8 @@ def extract_tiktok(doc, page_num):
     temp['address'] = adr
     temp['order_no'] = ord_no
     temp['post_code'] = temp['address'].apply(lambda x: re.findall(r"\d{5}", x)[0] if len(re.findall(r"\d{5}", x)) > 0 else '')
+    temp['name'] = temp['name'].apply(correct_th_text)
+    temp['address'] = temp['address'].apply(correct_th_text)
     
     return temp
 
@@ -205,5 +215,7 @@ def extract_lazada(doc, page_name):
     temp['address'] = adr.split(', ')[-2].split('/ ')[0]
     temp['order_no'] = ord_no
     temp['post_code'] = post_code
+    temp['name'] = temp['name'].apply(correct_th_text)
+    temp['address'] = temp['address'].apply(correct_th_text)
     
     return temp
